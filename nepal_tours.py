@@ -8,9 +8,9 @@ class Tours(scrapy.Spider):
         'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter',
     }
 
-    start_urls = ['https://www.himalayanglacier.com/trips/nepal/',
-                  'https://www.himalayanglacier.com/trips/tibet/',
-                  'https://www.himalayanglacier.com/trips/bhutan/',
+    start_urls = ['https://www.himalayanglacier.com/trips/nepal/#',
+                  'https://www.himalayanglacier.com/trips/tibet/#',
+                  'https://www.himalayanglacier.com/trips/bhutan/#',
                   'https://www.himalayanglacier.com/trips/india/',
                   'https://www.himalayanglacier.com/trips/tanzania/',
                   'https://www.himalayanglacier.com/trips/vietnam/',
@@ -26,7 +26,9 @@ class Tours(scrapy.Spider):
         with open(filename, 'w') as f:
             f.write(str(response.text))
 
-        for a in response.xpath("//div[@class='col-sm-12 col-md-12 col-lg-12 col-xl-12 trip-wrap']/div[@class='col-sm-12 col-md-6 col-lg-4 col-xl-4 t-block']/a/@href"):
+        # for a in response.xpath("//section[@class='destinationtrip trip-section container-fluid gdlr-core-animate-end']/div[@class='col-sm-12 col-md-12 col-lg-12 col-xl-12 trip-wrap']/div[@class='col-sm-12 col-md-6 col-lg-4 col-xl-4 t-block']/a/@href"):
+        #     yield scrapy.Request(url=a.get(), callback=self.parse_inner)
+        for a in response.xpath("//div[@class='col-sm-12 col-md-6 col-lg-4 col-xl-4 t-block']/a/@href"):
             yield scrapy.Request(url=a.get(), callback=self.parse_inner)
         next_page = response.xpath("//div[@id = 'gdlr-core-column-20993']/div/div[2]/div/div/div/div[2]/div[4]/a").extract_first()
         # next_page = response.xpath("//a[contains(text(),'Show more')]/load-more/@href").extract()
@@ -36,7 +38,6 @@ class Tours(scrapy.Spider):
             yield response.follow(next_page, self.parse)
 
     def parse_inner(self, response):
-        # i = 1
         for b in response.xpath("//div[@class='tourmaster-single-header-title-wrap tourmaster-item-pdlr']/div[@class='container-fluid']/div[@class='row']"):
             yield {
                 'url': b.xpath("//link[@rel='canonical']/@href").get(),
@@ -59,9 +60,9 @@ class Tours(scrapy.Spider):
                 'activity': response.xpath("//div[6]/div/div/div/div/div/div[2]/div[8]/div/div[2]/span/text()").get(),
                 'styles': response.xpath("//div[@id='overview']/div/div/div/div/div[2]/div[9]/div/div[2]/span/text()").get(),
                 'Itinerary': response.xpath("//a[contains(text(),'Show DetailItinerary')]").getall(),
-                'day': response.xpath("//div[@id='itinerary']/section/div/div/div/div/div[3]/table/span/text()").getall(),
-                'itinerary': response.xpath("//div[@id='itinerary']/section/div/div/div/div/div[3]/table/tbody/tr/td/span[2]/text()").get(),
-                'Max_altitude': response.xpath("//div[@id='itinerary']/section/div/div/div/div/div[3]/table/tbody/tr/td[2]/span/text()").get(),
-                'walking_hiking': response.xpath("//div[@id='itinerary']/section/div/div/div/div/div[3]/table/tbody/tr[2]/td[3]/span/text()").get()
+                # 'day': response.xpath("//div[@id='itinerary']/section/div/div/div/div/div[3]/table/span/text()").getall(),
+                # 'itinerary': response.xpath("//div[@id='itinerary']/section/div/div/div/div/div[3]/table/tbody/tr/td/span[2]/text()").get(),
+                # 'Max_altitude': response.xpath("//div[@id='itinerary']/section/div/div/div/div/div[3]/table/tbody/tr/td[2]/span/text()").get(),
+                # 'walking_hiking': response.xpath("//div[@id='itinerary']/section/div/div/div/div/div[3]/table/tbody/tr[2]/td[3]/span/text()").get()
 
             }
