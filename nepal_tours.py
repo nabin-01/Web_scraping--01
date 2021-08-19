@@ -3,7 +3,7 @@ from numpy import unicode
 
 
 class Tours(scrapy.Spider):
-    name = 'tours'
+    name = 'HimalayanGlacier'
     custom_settings = {
         'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter',
     }
@@ -22,7 +22,7 @@ class Tours(scrapy.Spider):
 
     def parse(self, response, **kwargs):
         page = response.url.split('/')[-2]
-        filename = f'tours-{page}.html'
+        filename = f'HimalayanGlacier-{page}.html'
         with open(filename, 'w') as f:
             f.write(str(response.text))
 
@@ -42,6 +42,7 @@ class Tours(scrapy.Spider):
                 'url': b.xpath("//link[@rel='canonical']/@href").get(),
                 'trip_country': b.xpath("//div[@class='col-sm-12 col-md-8 col-lg-8 col-xl-8 trip-topic triphead-block p-0']/div[@class='trip-destinations']/ul/li/text()").get(),
                 'trip heading/title': b.xpath("//title/text()").get(),
+                'description': response.xpath("//div[@id='tourmaster-page-wrapper']/div[2]/div/div/div/div[2]/div/div[2]/div/div/div/div/div/h6/text()").get(),
                 'package_name': b.xpath("//div[@class='col-sm-12 col-md-8 col-lg-8 col-xl-8 trip-topic triphead-block p-0']/h1[@class='tourmaster-single-header-title']/text()").get(),
                 'duration': b.xpath("//div[@class='col-sm-12 col-md-8 col-lg-8 col-xl-8 trip-topic triphead-block p-0']/h1[@class='tourmaster-single-header-title']/p/text()").get(),
                 'ratings': b.xpath("//div[@class='col-sm-12 col-md-8 col-lg-8 col-xl-8 trip-topic triphead-block p-0']/div[@class='rating']/div[@class='circle-rating']/text()").get(),
@@ -57,7 +58,8 @@ class Tours(scrapy.Spider):
                 'attraction': response.xpath("//div[@id='overview']/div/div/div/div/div[2]/div[7]/div/div[2]/span/text()").get(),
                 'activity': response.xpath("//div[6]/div/div/div/div/div/div[2]/div[8]/div/div[2]/span/text()").get(),
                 'styles': response.xpath("//div[@id='overview']/div/div/div/div/div[2]/div[9]/div/div[2]/span/text()").get(),
-                'day': response.xpath("//div[@id='itinerary']/section/div/div/div/div/div[3]/table/tbody/tr/td/span/text()").get(),
+                'Itinerary': response.xpath("//a[contains(text(),'Show DetailItinerary')]").getall(),
+                'day': response.xpath("//div[@id='itinerary']/section/div/div/div/div/div[3]/table/span/text()").getall(),
                 'itinerary': response.xpath("//div[@id='itinerary']/section/div/div/div/div/div[3]/table/tbody/tr/td/span[2]/text()").get(),
                 'Max_altitude': response.xpath("//div[@id='itinerary']/section/div/div/div/div/div[3]/table/tbody/tr/td[2]/span/text()").get(),
                 'walking_hiking': response.xpath("//div[@id='itinerary']/section/div/div/div/div/div[3]/table/tbody/tr[2]/td[3]/span/text()").get()
